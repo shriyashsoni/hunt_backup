@@ -1,0 +1,3 @@
+- Verify the build passes with the new type declaration
+- Ensure the CreateBounty page correctly handles the upload response
+- Test the upload flow (simulated or real) to ensure no runtime crashes
