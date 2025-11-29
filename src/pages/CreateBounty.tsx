@@ -1,0 +1,76 @@
+import { Navbar } from "@/components/Navbar";
+import { NeoButton, NeoCard } from "@/components/NeoComponents";
+import { createBounty, photon } from "@/lib/mock-aptos";
+import { useNavigate } from "react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Upload, Link as LinkIcon } from "lucide-react";
+
+export default function CreateBounty() {
+  const navigate = useNavigate();
+  const [url, setUrl] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url) return;
+
+    setIsSubmitting(true);
+    
+    // Simulate network request
+    setTimeout(() => {
+      const newBounty = createBounty(url, "0xUser");
+      photon.trackEvent('bounty_created', { bounty_id: newBounty.id });
+      
+      toast.success("Bounty Created!", {
+        description: "10 PAT reward added to your balance."
+      });
+      
+      navigate(`/bounty/${newBounty.id}`);
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      <main className="container mx-auto p-4 md:p-8 max-w-2xl">
+        <h1 className="text-4xl font-black uppercase mb-8">Create New Bounty</h1>
+        
+        <NeoCard>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block font-bold uppercase mb-2">Content URL</label>
+              <div className="flex gap-2">
+                <div className="bg-gray-100 border-2 border-black p-2 flex items-center justify-center">
+                  <LinkIcon className="w-5 h-5" />
+                </div>
+                <input 
+                  type="url" 
+                  placeholder="https://..." 
+                  className="flex-1 border-2 border-black p-2 font-mono"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  required
+                />
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Paste a link to the image or video you want to verify.
+              </p>
+            </div>
+
+            <div className="border-2 border-dashed border-black p-8 text-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors">
+              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <p className="font-bold">Or upload file directly</p>
+              <p className="text-xs text-muted-foreground">(Demo: URL input only for now)</p>
+            </div>
+
+            <NeoButton type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Create Bounty & Earn 10 PAT"}
+            </NeoButton>
+          </form>
+        </NeoCard>
+      </main>
+    </div>
+  );
+}

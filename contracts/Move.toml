@@ -1,0 +1,10 @@
+[package]
+name = "DeepfakeBountyHunters"
+version = "1.0.0"
+authors = ["Vly AI"]
+
+[addresses]
+admin = "_"
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework", rev = "main" }
