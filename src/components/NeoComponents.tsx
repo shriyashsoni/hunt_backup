@@ -10,10 +10,11 @@ export const NeoButton = React.forwardRef<HTMLButtonElement, React.ComponentProp
         ref={ref}
         className={cn(
           "neo-button font-bold uppercase tracking-wider transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-none",
-          variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
-          variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/90",
-          variant === "destructive" && "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-          variant === "outline" && "bg-background hover:bg-accent hover:text-accent-foreground",
+          variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90 border-2 border-black",
+          variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-2 border-black",
+          variant === "destructive" && "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-2 border-black",
+          variant === "outline" && "bg-background border-2 border-black text-black hover:bg-accent hover:text-accent-foreground",
+          variant === "ghost" && "hover:bg-accent hover:text-accent-foreground",
           className
         )}
         {...props}
@@ -28,7 +29,7 @@ export const NeoCard = React.forwardRef<HTMLDivElement, React.ComponentProps<typ
     return (
       <Card
         ref={ref}
-        className={cn("neo-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.15)]", className)}
+        className={cn("neo-card p-6 border-2 border-black transition-all duration-300 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.15)]", className)}
         {...props}
       />
     );
