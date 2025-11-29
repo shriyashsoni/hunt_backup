@@ -8,44 +8,63 @@ import { getAptBalance } from "@/lib/aptos";
 export function WalletConnect() {
   const { connect, disconnect, account, connected, wallets } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
     const fetchBalance = async () => {
-      if (account?.address && mounted) {
+      if (account?.address && isActive) {
         const bal = await getAptBalance(account.address.toString());
-        if (mounted) setBalance(bal);
+        if (isActive) setBalance(bal);
       }
     };
 
-    if (connected) {
+    if (connected && account) {
       fetchBalance();
       // Poll for balance updates every 5 seconds
       const interval = setInterval(fetchBalance, 5000);
       return () => {
-        mounted = false;
+        isActive = false;
         clearInterval(interval);
       };
     } else {
       setBalance(null);
     }
-    return () => { mounted = false; };
+    
+    return () => { isActive = false; };
   }, [connected, account]);
 
   const handleConnect = () => {
-    const petra = wallets?.find((w: any) => w.name === "Petra");
+    // Safely check for wallets
+    if (!wallets || wallets.length === 0) {
+      toast.error("No wallets found. Please install Petra Wallet.");
+      window.open("https://petra.app/", "_blank");
+      return;
+    }
+
+    const petra = wallets.find((w: any) => w.name === "Petra");
     if (petra) {
       connect(petra.name);
     } else {
-      // Fallback to first available or show error
-      if (wallets && wallets.length > 0) {
-        connect(wallets[0].name);
-      } else {
-        toast.error("Petra wallet not found. Please install it.");
-        window.open("https://petra.app/", "_blank");
-      }
+      // Fallback to first available
+      connect(wallets[0].name);
     }
   };
+
+  // Prevent hydration mismatch
+  if (!isMounted) {
+    return (
+      <NeoButton className="bg-teal-400 hover:bg-teal-500 text-black opacity-50 cursor-not-allowed">
+        <Wallet className="w-4 h-4 mr-2" />
+        Loading...
+      </NeoButton>
+    );
+  }
 
   if (connected && account) {
     return (
@@ -61,7 +80,7 @@ export function WalletConnect() {
         <NeoButton
           variant="outline"
           size="sm"
-          onClick={disconnect}
+          onClick={() => disconnect()}
           className="bg-red-100 hover:bg-red-200 border-red-900 text-red-900"
         >
           <LogOut className="w-4 h-4 md:mr-2" />
