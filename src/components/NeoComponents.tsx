@@ -9,7 +9,7 @@ export const NeoButton = React.forwardRef<HTMLButtonElement, React.ComponentProp
       <Button
         ref={ref}
         className={cn(
-          "neo-button font-bold uppercase tracking-wider",
+          "neo-button font-bold uppercase tracking-wider transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none",
           variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
           variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/90",
           variant === "destructive" && "bg-destructive text-destructive-foreground hover:bg-destructive/90",
@@ -28,7 +28,7 @@ export const NeoCard = React.forwardRef<HTMLDivElement, React.ComponentProps<typ
     return (
       <Card
         ref={ref}
-        className={cn("neo-card p-6", className)}
+        className={cn("neo-card p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]", className)}
         {...props}
       />
     );
