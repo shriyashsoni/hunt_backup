@@ -3,7 +3,7 @@ import { NeoButton, NeoCard } from "@/components/NeoComponents";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Upload, Link as LinkIcon, Database } from "lucide-react";
+import { Upload, Link as LinkIcon, Database, Youtube, Twitter, Instagram, Video } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { uploadToShelby } from "@/lib/shelby";
@@ -88,6 +88,17 @@ export default function CreateBounty() {
                   required={!url}
                 />
               </div>
+              
+              <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-sm">
+                <p className="text-xs font-bold uppercase text-blue-800 mb-2">Supported Platforms</p>
+                <div className="flex flex-wrap gap-4 text-sm text-blue-900">
+                  <div className="flex items-center gap-1"><Youtube className="w-4 h-4" /> YouTube</div>
+                  <div className="flex items-center gap-1"><Video className="w-4 h-4" /> TikTok</div>
+                  <div className="flex items-center gap-1"><Instagram className="w-4 h-4" /> Instagram</div>
+                  <div className="flex items-center gap-1"><Twitter className="w-4 h-4" /> X (Twitter)</div>
+                </div>
+              </div>
+
               <p className="text-sm text-muted-foreground mt-2">
                 Paste a link to the image or video. We will archive it on Shelby.
               </p>
