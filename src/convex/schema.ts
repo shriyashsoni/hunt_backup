@@ -46,6 +46,7 @@ const schema = defineSchema(
       aiPool: v.number(),
       isResolved: v.boolean(),
       isReal: v.optional(v.boolean()),
+      marketId: v.optional(v.number()), // On-chain market ID
       // New fields for Veritas AI analysis
       confidence: v.optional(v.number()),
       analysisLog: v.optional(v.array(v.string())),

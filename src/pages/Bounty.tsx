@@ -13,6 +13,7 @@ import { analyzeContent } from "@/lib/veritas";
 import { Footer } from "@/components/Footer";
 import { getYoutubeThumbnail, isYoutubeUrl, getYoutubeId } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
+import { MODULE_ADDRESS, MODULE_NAME } from "@/lib/aptos";
 
 // Treasury address to collect bets (Demo address)
 const TREASURY_ADDRESS = "0x98a5e0efcf102175e75dd459068ade9e845dd61291e6197d1cf01e3d6c590e93";
@@ -57,11 +58,14 @@ export default function BountyPage() {
       // 1. Trigger Real Aptos Transaction
       const amountOctas = Math.floor(Number(betAmount) * 100_000_000); // Convert APT to Octas
       
+      // Use a default market ID of 1 if not set (for demo purposes) or the actual marketId
+      const marketId = bounty.marketId ? bounty.marketId.toString() : "1";
+
       const transaction: InputTransactionData = {
         data: {
-          function: "0x1::coin::transfer",
-          typeArguments: ["0x1::aptos_coin::AptosCoin"],
-          functionArguments: [TREASURY_ADDRESS, amountOctas.toString()],
+          function: `${MODULE_ADDRESS}::${MODULE_NAME}::place_bet`,
+          typeArguments: [],
+          functionArguments: [marketId, side, amountOctas.toString()], 
         },
         options: {
           maxGasAmount: 10000,

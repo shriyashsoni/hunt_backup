@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
+import { MODULE_ADDRESS, MODULE_NAME } from "@/lib/aptos";
 
 export function RewardClaim() {
   const claims = useQuery(api.claims.list);
@@ -23,21 +24,12 @@ export function RewardClaim() {
     setClaimingId(claim._id);
 
     try {
-      // In a real implementation, this would call the RewardDistributor smart contract
-      // const payload = {
-      //   type: "entry_function_payload",
-      //   function: "0x...::reward_distributor::claim_reward",
-      //   type_arguments: [],
-      //   arguments: [claim.amount, claim.signature],
-      // };
-      
-      // For this demo, we simulate the transaction by sending a 0 APT transaction to self
-      // This proves the user can sign and submit a transaction
+      // Call the RewardDistributor smart contract
       const transaction: InputTransactionData = {
         data: {
-          function: "0x1::coin::transfer",
-          typeArguments: ["0x1::aptos_coin::AptosCoin"],
-          functionArguments: [account.address, "0"], // 0 transfer to self, passed as string
+          function: `${MODULE_ADDRESS}::${MODULE_NAME}::claim_reward`,
+          typeArguments: [],
+          functionArguments: [claim.marketId ? claim.marketId.toString() : "1"], // Use marketId
         },
         options: {
           maxGasAmount: 5000,

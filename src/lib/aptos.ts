@@ -9,6 +9,9 @@ const QUICKNODE_RPC_URL = "https://silent-summer-butterfly.aptos-testnet.quiknod
 const NODE_URL = import.meta.env.VITE_APTOS_NODE_URL || OFFICIAL_TESTNET_URL;
 const API_KEY = import.meta.env.VITE_APTOS_API_KEY;
 
+export const MODULE_ADDRESS = "0x155e43ac5e3c045997eae5fc8ccbcf9ddcc8dbd77849e4e54a40aa7d9dfd9ba9";
+export const MODULE_NAME = "market";
+
 const config = new AptosConfig({
   network: Network.TESTNET,
   fullnode: NODE_URL,
