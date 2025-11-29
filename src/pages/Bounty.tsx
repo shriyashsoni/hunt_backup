@@ -251,6 +251,13 @@ export default function BountyPage() {
               </div>
             )}
 
+            {!bounty.marketId && !bounty.creationTxnHash && (
+              <div className="bg-gray-100 border-2 border-gray-500 text-gray-700 p-4 mb-4 flex items-center gap-2 font-bold">
+                <ShieldAlert className="w-5 h-5" />
+                <span>LEGACY BOUNTY: This bounty was created off-chain. Betting is disabled.</span>
+              </div>
+            )}
+
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <h1 className="text-3xl md:text-4xl font-black uppercase">Bounty #{bounty._id.slice(-4)}</h1>
               <div className="flex flex-wrap gap-2">
@@ -370,7 +377,7 @@ export default function BountyPage() {
 
             {/* Betting Interface */}
             <div className="grid md:grid-cols-2 gap-8">
-              <NeoCard className={`border-green-500 ${bounty.isResolved || isWrongNetwork ? 'opacity-50' : ''}`}>
+              <NeoCard className={`border-green-500 ${bounty.isResolved || isWrongNetwork || !bounty.marketId ? 'opacity-50' : ''}`}>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-2xl font-black uppercase text-green-600">Real</h3>
                   <ShieldCheck className="w-8 h-8 text-green-600" />
@@ -384,19 +391,19 @@ export default function BountyPage() {
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
                     className="flex-1 border-2 border-black p-2 font-mono font-bold"
-                    disabled={bounty.isResolved || !!isWrongNetwork}
+                    disabled={bounty.isResolved || !!isWrongNetwork || !bounty.marketId}
                   />
                   <NeoButton 
                     className="bg-green-500 hover:bg-green-600 text-white flex-1"
                     onClick={() => handleBet(true)}
-                    disabled={bounty.isResolved || !!isWrongNetwork}
+                    disabled={bounty.isResolved || !!isWrongNetwork || !bounty.marketId}
                   >
-                    Bet Real
+                    {!bounty.marketId ? (bounty.creationTxnHash ? "Sync Required" : "Legacy Bounty") : "Bet Real"}
                   </NeoButton>
                 </div>
               </NeoCard>
 
-              <NeoCard className={`border-red-500 ${bounty.isResolved || isWrongNetwork ? 'opacity-50' : ''}`}>
+              <NeoCard className={`border-red-500 ${bounty.isResolved || isWrongNetwork || !bounty.marketId ? 'opacity-50' : ''}`}>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-2xl font-black uppercase text-red-600">AI Generated</h3>
                   <ShieldAlert className="w-8 h-8 text-red-600" />
@@ -410,14 +417,14 @@ export default function BountyPage() {
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
                     className="flex-1 border-2 border-black p-2 font-mono font-bold"
-                    disabled={bounty.isResolved || !!isWrongNetwork}
+                    disabled={bounty.isResolved || !!isWrongNetwork || !bounty.marketId}
                   />
                   <NeoButton 
                     className="bg-red-500 hover:bg-red-600 text-white flex-1"
                     onClick={() => handleBet(false)}
-                    disabled={bounty.isResolved || !!isWrongNetwork}
+                    disabled={bounty.isResolved || !!isWrongNetwork || !bounty.marketId}
                   >
-                    Bet AI
+                    {!bounty.marketId ? (bounty.creationTxnHash ? "Sync Required" : "Legacy Bounty") : "Bet AI"}
                   </NeoButton>
                 </div>
               </NeoCard>

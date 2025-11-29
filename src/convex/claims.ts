@@ -16,7 +16,11 @@ export const list = query({
     // Enrich with bounty info
     const enrichedClaims = await Promise.all(claims.map(async (claim) => {
       const bounty = await ctx.db.get(claim.bountyId);
-      return { ...claim, bountyContent: bounty?.contentUrl };
+      return { 
+        ...claim, 
+        bountyContent: bounty?.contentUrl,
+        marketId: bounty?.marketId 
+      };
     }));
 
     return enrichedClaims;
