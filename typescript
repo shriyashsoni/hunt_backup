@@ -1,0 +1,10 @@
+const handleSimulateVerification = () => {
+  setIsVerifying(true);
+  
+  // In a real app, this would be restricted to an admin or oracle
+  const bounty = await ctx.db.get(args.bountyId);
+  
+  // Simulate 2 second delay
+  setTimeout(async () => {
+    const isReal = Math.random() > 0.5; // <--- Random simulation
+    // ...
