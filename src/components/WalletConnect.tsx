@@ -10,40 +10,37 @@ export function WalletConnect() {
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
-    let mounted = true;
     const fetchBalance = async () => {
       if (account?.address) {
         const bal = await getAptBalance(account.address.toString());
-        if (mounted) setBalance(bal);
+        setBalance(bal);
       }
     };
 
-    if (connected) {
+    if (connected && account) {
       fetchBalance();
       // Poll for balance updates every 5 seconds
       const interval = setInterval(fetchBalance, 5000);
-      return () => {
-        mounted = false;
-        clearInterval(interval);
-      };
+      return () => clearInterval(interval);
     } else {
-      if (mounted) setBalance(null);
-      return () => { mounted = false; };
+      setBalance(null);
     }
   }, [connected, account]);
 
   const handleConnect = () => {
+    // Safely check for wallets
+    if (!wallets || wallets.length === 0) {
+      toast.error("No wallets found. Please install Petra Wallet.");
+      window.open("https://petra.app/", "_blank");
+      return;
+    }
+
     const petra = wallets.find((w: any) => w.name === "Petra");
     if (petra) {
       connect(petra.name);
     } else {
-      // Fallback to first available or show error
-      if (wallets.length > 0) {
-        connect(wallets[0].name);
-      } else {
-        toast.error("Petra wallet not found. Please install it.");
-        window.open("https://petra.app/", "_blank");
-      }
+      // Fallback to first available
+      connect(wallets[0].name);
     }
   };
 
