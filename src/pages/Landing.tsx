@@ -13,7 +13,7 @@ const TypewriterText = ({ text, className, delay = 0 }: { text: string; classNam
           key={i}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0, delay: delay + i * 0.1 }}
+          transition={{ duration: 0, delay: delay + i * 0.15 }}
         >
           {char}
         </motion.span>
@@ -47,8 +47,8 @@ const TypewriterCycle = ({
     if (!hasStarted) return;
 
     const currentWord = words[wordIndex % words.length];
-    const typeSpeed = isDeleting ? 50 : 100;
-    const pauseDuration = 2000;
+    const typeSpeed = isDeleting ? 75 : 150;
+    const pauseDuration = 2500;
 
     const timer = setTimeout(() => {
       if (!isDeleting) {
@@ -97,17 +97,17 @@ export default function Landing() {
           <h1 className="text-6xl md:text-8xl font-black uppercase leading-none mb-6 min-h-[160px] md:min-h-[200px]">
             <div className="block">
               <TypewriterText text="Hunt " delay={0} />
-              <TypewriterCycle words={["Deepfakes", "AI Lies", "Synthetics", "Falsehoods"]} className="text-primary" delay={0.5} />
-              <TypewriterText text="." delay={1.4} />
+              <TypewriterCycle words={["Deepfakes", "AI Lies", "Synthetics", "Falsehoods"]} className="text-primary" delay={0.8} />
+              <TypewriterText text="." delay={2.2} />
             </div>
             <div className="block">
-              <TypewriterText text="Earn " delay={1.5} />
-              <TypewriterCycle words={["Crypto", "Trust", "Rewards", "APT"]} className="text-secondary" delay={2.0} />
-              <TypewriterText text="." delay={2.6} />
+              <TypewriterText text="Earn " delay={2.3} />
+              <TypewriterCycle words={["Crypto", "Trust", "Rewards", "APT"]} className="text-secondary" delay={3.1} />
+              <TypewriterText text="." delay={4.1} />
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 0] }}
-                transition={{ delay: 2.7, duration: 0.8, repeat: Infinity }}
+                transition={{ delay: 4.2, duration: 0.8, repeat: Infinity }}
                 className="inline-block w-4 h-12 md:h-20 bg-black ml-2 align-middle"
               />
             </div>
@@ -116,7 +116,7 @@ export default function Landing() {
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.8 }}
+            transition={{ delay: 4.3 }}
             className="text-xl md:text-2xl font-bold max-w-2xl mx-auto mb-12 text-muted-foreground"
           >
             The first prediction market for viral content authenticity. 
@@ -126,7 +126,7 @@ export default function Landing() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.0 }}
+            transition={{ delay: 4.5 }}
             className="flex flex-col md:flex-row gap-4 justify-center"
           >
             <NeoButton size="lg" className="text-xl px-8 py-6 w-full md:w-auto" onClick={() => navigate("/auth")}>
