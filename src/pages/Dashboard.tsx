@@ -11,6 +11,7 @@ import { getBlockHeight, getAptBalance } from "@/lib/aptos";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { RewardClaim } from "@/components/RewardClaim";
 import { Footer } from "@/components/Footer";
+import { getYoutubeThumbnail, isYoutubeUrl } from "@/lib/utils";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -118,7 +119,12 @@ export default function Dashboard() {
               ) : bounties.length === 0 ? (
                  <div className="text-center py-10">No active bounties found. Create one!</div>
               ) : (
-                bounties.map((bounty, index) => (
+                bounties.map((bounty, index) => {
+                  const displayImage = isYoutubeUrl(bounty.contentUrl) 
+                    ? getYoutubeThumbnail(bounty.contentUrl) 
+                    : bounty.contentUrl;
+
+                  return (
                 <motion.div
                   key={bounty._id}
                   initial={{ opacity: 0, y: 20 }}
@@ -130,7 +136,7 @@ export default function Dashboard() {
                     <NeoCard className="group cursor-pointer hover:bg-accent/5 transition-colors">
                       <div className="flex flex-col md:flex-row gap-4">
                         <div className="w-full md:w-48 h-48 md:h-32 bg-gray-200 border-2 border-black overflow-hidden relative">
-                          <img src={bounty.contentUrl} alt="Bounty Content" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          <img src={displayImage || "/placeholder.svg"} alt="Bounty Content" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                           <div className="absolute top-2 left-2">
                             <NeoBadge variant={bounty.status === 'pending' ? 'warning' : bounty.status === 'verified_real' ? 'success' : 'danger'}>
                               {bounty.status === 'pending' ? 'PENDING' : bounty.status === 'verified_real' ? 'REAL' : 'FAKE'}
@@ -165,7 +171,8 @@ export default function Dashboard() {
                     </NeoCard>
                   </div>
                 </motion.div>
-              )))}
+              );
+            }))}
             </div>
           </div>
 

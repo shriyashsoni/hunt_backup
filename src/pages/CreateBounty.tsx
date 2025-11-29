@@ -10,6 +10,7 @@ import { uploadToShelby } from "@/lib/shelby";
 import { useRef } from "react";
 import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
+import { getYoutubeThumbnail, isYoutubeUrl } from "@/lib/utils";
 
 export default function CreateBounty() {
   const navigate = useNavigate();
@@ -66,6 +67,8 @@ export default function CreateBounty() {
     }
   };
 
+  const previewImage = isYoutubeUrl(url) ? getYoutubeThumbnail(url) : null;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -96,6 +99,13 @@ export default function CreateBounty() {
                   />
                 </div>
                 
+                {previewImage && (
+                  <div className="mt-4 border-2 border-black bg-black">
+                    <p className="text-white text-xs font-bold uppercase p-1">Preview</p>
+                    <img src={previewImage} alt="Preview" className="w-full h-48 object-cover" />
+                  </div>
+                )}
+
                 <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-sm">
                   <p className="text-xs font-bold uppercase text-blue-800 mb-2">Supported Platforms</p>
                   <div className="flex flex-wrap gap-4 text-sm text-blue-900">

@@ -11,6 +11,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useWallet, InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import { analyzeContent } from "@/lib/veritas";
 import { Footer } from "@/components/Footer";
+import { getYoutubeThumbnail, isYoutubeUrl, getYoutubeId } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
 
 // Treasury address to collect bets (Demo address)
 const TREASURY_ADDRESS = "0x98a5e0efcf102175e75dd459068ade9e845dd61291e6197d1cf01e3d6c590e93";
@@ -36,6 +38,12 @@ export default function BountyPage() {
   }, [bounty, navigate]);
 
   if (!bounty) return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
+
+  const displayImage = isYoutubeUrl(bounty.contentUrl) 
+    ? getYoutubeThumbnail(bounty.contentUrl) 
+    : bounty.contentUrl;
+
+  const youtubeId = isYoutubeUrl(bounty.contentUrl) ? getYoutubeId(bounty.contentUrl) : null;
 
   const handleBet = async (side: boolean) => {
     if (!account) {
@@ -158,7 +166,20 @@ export default function BountyPage() {
             {/* Content Display */}
             <NeoCard className="p-0 overflow-hidden bg-black">
               <div className="relative aspect-video w-full flex items-center justify-center bg-gray-900">
-                <img src={bounty.contentUrl} alt="Content" className="max-h-full max-w-full object-contain" />
+                {youtubeId ? (
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src={`https://www.youtube.com/embed/${youtubeId}`} 
+                    title="YouTube video player" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                    className="absolute inset-0"
+                  ></iframe>
+                ) : (
+                  <img src={displayImage || "/placeholder.svg"} alt="Content" className="max-h-full max-w-full object-contain" />
+                )}
                 
                 {/* Overlay for verification status */}
                 <AnimatePresence>
@@ -206,6 +227,24 @@ export default function BountyPage() {
                   )}
                 </AnimatePresence>
               </div>
+            </NeoCard>
+
+            {/* Source Link */}
+            <NeoCard className="bg-blue-50 border-blue-200 flex items-center justify-between p-4">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <div className="bg-blue-100 p-2 rounded-full">
+                  <ExternalLink className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-xs font-bold uppercase text-blue-600">Source Content</span>
+                  <a href={bounty.contentUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-mono truncate hover:underline text-blue-800">
+                    {bounty.contentUrl}
+                  </a>
+                </div>
+              </div>
+              <NeoButton size="sm" variant="outline" onClick={() => window.open(bounty.contentUrl, '_blank')}>
+                Open Link
+              </NeoButton>
             </NeoCard>
 
             {/* Analysis Logs (Post-Resolution) */}
