@@ -95,7 +95,7 @@ export default function BountyPage() {
         data: {
           function: `${MODULE_ADDRESS}::${MODULE_NAME}::place_bet`,
           typeArguments: [],
-          functionArguments: [marketId, side, amountOctas.toString()], 
+          functionArguments: [marketId, amountOctas.toString(), side], 
         },
         options: {
           maxGasAmount: 10000,
