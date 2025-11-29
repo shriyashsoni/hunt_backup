@@ -6,6 +6,10 @@ import Dashboard from "@/pages/Dashboard.tsx";
 import BountyPage from "@/pages/Bounty.tsx";
 import Profile from "@/pages/Profile.tsx";
 import CreateBounty from "@/pages/CreateBounty.tsx";
+import Whitepaper from "@/pages/Whitepaper.tsx";
+import FAQ from "@/pages/FAQ.tsx";
+import PrivacyPolicy from "@/pages/PrivacyPolicy.tsx";
+import TermsOfService from "@/pages/TermsOfService.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect } from "react";
@@ -60,6 +64,10 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/create-bounty" element={<CreateBounty />} />
               <Route path="/bounty/:id" element={<BountyPage />} />
               <Route path="/profile/:address" element={<Profile />} />
+              <Route path="/whitepaper" element={<Whitepaper />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

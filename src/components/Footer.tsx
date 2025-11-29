@@ -37,14 +37,14 @@ export function Footer() {
             <h3 className="font-bold uppercase mb-4 text-lg">Resources</h3>
             <ul className="space-y-2 text-gray-400 font-mono text-sm">
               <li>
-                <a href="#" className="hover:text-white transition-colors flex items-center gap-2">
+                <Link to="/whitepaper" className="hover:text-white transition-colors flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Whitepaper
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors flex items-center gap-2">
+                <Link to="/faq" className="hover:text-white transition-colors flex items-center gap-2">
                   <HelpCircle className="w-4 h-4" /> FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -64,8 +64,8 @@ export function Footer() {
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-gray-500">
           <p>© 2024 Deepfake Hunters. All rights reserved.</p>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:text-white">Terms of Service</a>
+            <Link to="/privacy" className="hover:text-white">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white">Terms of Service</Link>
           </div>
         </div>
       </div>
