@@ -22,7 +22,8 @@ let client: ShelbyClient | null = null;
 function getClient(): ShelbyClient | null {
   if (client) return client;
 
-  const apiKey = import.meta.env.VITE_SHELBY_API_KEY || "demo_key"; // Fallback for demo
+  // Use Shelby specific key, or fall back to general Aptos key, or demo
+  const apiKey = import.meta.env.VITE_SHELBY_API_KEY || import.meta.env.VITE_APTOS_API_KEY || "demo_key"; 
   
   try {
     client = new ShelbyClient({

@@ -3,9 +3,14 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 // Configuration with the provided QuickNode RPC URL
 const QUICKNODE_RPC_URL = "https://silent-summer-butterfly.aptos-testnet.quiknode.pro/71100b50129ba2d53c643fb1957feab704ff1945/";
 
+// Allow overriding via env vars
+const NODE_URL = import.meta.env.VITE_APTOS_NODE_URL || QUICKNODE_RPC_URL;
+const API_KEY = import.meta.env.VITE_APTOS_API_KEY;
+
 const config = new AptosConfig({
   network: Network.TESTNET,
-  fullnode: QUICKNODE_RPC_URL,
+  fullnode: NODE_URL,
+  clientConfig: API_KEY ? { API_KEY } : undefined,
 });
 
 export const aptos = new Aptos(config);
