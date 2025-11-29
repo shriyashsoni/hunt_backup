@@ -10,10 +10,11 @@ export function WalletConnect() {
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
+    let mounted = true;
     const fetchBalance = async () => {
       if (account?.address) {
         const bal = await getAptBalance(account.address.toString());
-        setBalance(bal);
+        if (mounted) setBalance(bal);
       }
     };
 
@@ -21,9 +22,13 @@ export function WalletConnect() {
       fetchBalance();
       // Poll for balance updates every 5 seconds
       const interval = setInterval(fetchBalance, 5000);
-      return () => clearInterval(interval);
+      return () => {
+        mounted = false;
+        clearInterval(interval);
+      };
     } else {
-      setBalance(null);
+      if (mounted) setBalance(null);
+      return () => { mounted = false; };
     }
   }, [connected, account]);
 
