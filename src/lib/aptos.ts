@@ -15,6 +15,19 @@ const config = new AptosConfig({
 
 export const aptos = new Aptos(config);
 
+// Helper to fund account (Testnet only)
+export const fundAccount = async (address: string, amount: number) => {
+  try {
+    await aptos.fundAccount({
+      accountAddress: address,
+      amount: amount,
+    });
+  } catch (error) {
+    console.error("Failed to fund account:", error);
+    throw error;
+  }
+};
+
 // Helper to get APT balance (CoinStore)
 export const getAptBalance = async (address: string): Promise<number> => {
   try {
