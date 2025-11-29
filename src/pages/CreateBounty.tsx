@@ -3,7 +3,7 @@ import { NeoButton, NeoCard } from "@/components/NeoComponents";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Upload, Link as LinkIcon, Database, Youtube, Twitter, Instagram, Video } from "lucide-react";
+import { Upload, Link as LinkIcon, Database, Youtube, Twitter, Instagram, Video, Wallet } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { uploadToShelby } from "@/lib/shelby";
@@ -11,6 +11,8 @@ import { useRef } from "react";
 import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
 import { getYoutubeThumbnail, isYoutubeUrl } from "@/lib/utils";
+import { useWallet, InputTransactionData } from "@aptos-labs/wallet-adapter-react";
+import { MODULE_ADDRESS, MODULE_NAME, aptos } from "@/lib/aptos";
 
 export default function CreateBounty() {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ export default function CreateBounty() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createBounty = useMutation(api.bounties.create);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // @ts-ignore
+  const { signAndSubmitTransaction, account, connected } = useWallet();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,18 +30,70 @@ export default function CreateBounty() {
   };
 
   const processBountyCreation = async (contentUrl: string) => {
+    if (!account || !connected) {
+      toast.error("Please connect your wallet to create a bounty on-chain");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const bountyId = await createBounty({ contentUrl });
+      toast.info("Creating market on Aptos Blockchain...");
       
-      toast.success("Bounty Created!", {
-        description: "Content secured on Shelby Protocol. 10 PAT reward added."
+      // 1. Create Market on Chain
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${MODULE_ADDRESS}::${MODULE_NAME}::create_market`,
+          typeArguments: [],
+          functionArguments: [contentUrl],
+        },
+      };
+
+      const response = await signAndSubmitTransaction(transaction);
+      toast.loading("Waiting for transaction confirmation...", { duration: 5000 });
+      
+      const committedTxn = await aptos.waitForTransaction({ transactionHash: response.hash });
+      
+      // Attempt to extract marketId from events
+      // We look for any event that has a `market_id` field
+      let marketId: number | undefined = undefined;
+      
+      // @ts-ignore
+      if (committedTxn.events) {
+        // @ts-ignore
+        for (const event of committedTxn.events) {
+          if (event.data && event.data.market_id) {
+            marketId = Number(event.data.market_id);
+            break;
+          }
+        }
+      }
+
+      if (marketId === undefined) {
+        console.warn("Could not find market_id in transaction events. Defaulting to undefined.");
+        // Fallback: If we can't find it, we might query the resource count, but for now let's proceed
+        // The user might have to manually link it or we rely on the backend to sync later.
+        // For this demo, we'll try to proceed.
+      } else {
+        console.log("Market Created with ID:", marketId);
+      }
+
+      // 2. Create Bounty in Convex
+      const bountyId = await createBounty({ 
+        contentUrl,
+        marketId: marketId 
+      });
+      
+      toast.success("Bounty Created Successfully!", {
+        description: `Market ID: ${marketId || 'Pending'} | 10 PAT reward added.`
       });
       
       navigate(`/bounty/${bountyId}`);
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Failed to create bounty");
       console.error(error);
+      if (error.message && error.message.includes("rejected")) {
+        toast.error("Transaction rejected by user");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -82,6 +138,16 @@ export default function CreateBounty() {
           <h1 className="text-4xl font-black uppercase mb-8">Create New Bounty</h1>
           
           <NeoCard>
+            {!connected ? (
+              <div className="text-center py-8">
+                <Wallet className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <h2 className="text-xl font-bold mb-2">Wallet Connection Required</h2>
+                <p className="text-muted-foreground mb-6">You must connect your Aptos wallet to create an on-chain prediction market.</p>
+                <NeoButton onClick={() => document.querySelector<HTMLButtonElement>('.wallet-adapter-button')?.click()}>
+                  Connect Wallet
+                </NeoButton>
+              </div>
+            ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block font-bold uppercase mb-2">Content URL</label>
@@ -141,9 +207,10 @@ export default function CreateBounty() {
               </div>
 
               <NeoButton type="submit" className="w-full" disabled={isSubmitting || !url}>
-                {isSubmitting ? "Processing..." : "Create Bounty & Earn 10 PAT"}
+                {isSubmitting ? "Processing On-Chain..." : "Create Bounty & Earn 10 PAT"}
               </NeoButton>
             </form>
+            )}
           </NeoCard>
         </motion.div>
       </main>

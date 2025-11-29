@@ -20,6 +20,7 @@ export const get = query({
 export const create = mutation({
   args: {
     contentUrl: v.string(),
+    marketId: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -33,6 +34,7 @@ export const create = mutation({
       realPool: 0,
       aiPool: 0,
       isResolved: false,
+      marketId: args.marketId,
     });
 
     // Reward user with PAT (simulated)

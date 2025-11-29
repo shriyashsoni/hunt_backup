@@ -82,14 +82,21 @@ export default function BountyPage() {
       return;
     }
 
+    // Check if marketId exists
+    if (!bounty.marketId) {
+      toast.error("Market Not Found On-Chain", {
+        description: "This bounty was created before the smart contract integration or failed to sync. Please create a new bounty."
+      });
+      return;
+    }
+
     try {
       toast.info("Please sign the transaction in your wallet...");
       
       // 1. Trigger Real Aptos Transaction
       const amountOctas = Math.floor(Number(betAmount) * 100_000_000); // Convert APT to Octas
       
-      // Use a default market ID of 1 if not set (for demo purposes) or the actual marketId
-      const marketId = bounty.marketId ? bounty.marketId.toString() : "1";
+      const marketId = bounty.marketId.toString();
 
       const transaction: InputTransactionData = {
         data: {
