@@ -3,7 +3,6 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 // Use official Testnet URL as primary if QuickNode fails or is not set
 // The QuickNode URL might be rate limited or down
 const OFFICIAL_TESTNET_URL = "https://api.testnet.aptoslabs.com/v1";
-const QUICKNODE_RPC_URL = "https://silent-summer-butterfly.aptos-testnet.quiknode.pro/71100b50129ba2d53c643fb1957feab704ff1945/";
 
 // Allow overriding via env vars, fallback to Official Testnet for reliability
 const NODE_URL = import.meta.env.VITE_APTOS_NODE_URL || OFFICIAL_TESTNET_URL;
@@ -12,6 +11,7 @@ const API_KEY = import.meta.env.VITE_APTOS_API_KEY;
 export const MODULE_ADDRESS = "0x155e43ac5e3c045997eae5fc8ccbcf9ddcc8dbd77849e4e54a40aa7d9dfd9ba9";
 export const MODULE_NAME = "market";
 
+// Force Testnet configuration
 const config = new AptosConfig({
   network: Network.TESTNET,
   fullnode: NODE_URL,
