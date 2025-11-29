@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { NeoButton } from "./NeoComponents";
 import { useAuth } from "@/hooks/use-auth";
 import { User } from "lucide-react";
+import { WalletConnect } from "./WalletConnect";
 
 export function Navbar() {
   const { isAuthenticated, user } = useAuth();
@@ -18,6 +19,8 @@ export function Navbar() {
             <NeoButton variant="ghost" className="hidden md:flex">Dashboard</NeoButton>
           </Link>
           
+          <WalletConnect />
+
           {isAuthenticated ? (
             <Link to={`/profile/${user?._id}`}>
               <NeoButton variant="outline" className="flex items-center gap-2">
