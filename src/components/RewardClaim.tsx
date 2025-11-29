@@ -12,13 +12,23 @@ import { MODULE_ADDRESS, MODULE_NAME } from "@/lib/aptos";
 export function RewardClaim() {
   const claims = useQuery(api.claims.list);
   const markClaimed = useMutation(api.claims.markClaimed);
-  const { signAndSubmitTransaction, account } = useWallet();
+  const { signAndSubmitTransaction, account, network } = useWallet();
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
   const handleClaim = async (claim: any) => {
     if (!account) {
       toast.error("Please connect your wallet to claim rewards");
       return;
+    }
+
+    if (network) {
+      const isTestnet = network.name?.toLowerCase().includes("testnet") || network.chainId?.toString() === "2";
+      if (!isTestnet) {
+        toast.error("Wrong Network", { 
+          description: `You are on ${network.name}. Please switch to Aptos Testnet to claim rewards.` 
+        });
+        return;
+      }
     }
 
     setClaimingId(claim._id);

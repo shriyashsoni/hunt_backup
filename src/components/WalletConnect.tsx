@@ -2,26 +2,37 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { NeoButton } from "./NeoComponents";
 import { Wallet, LogOut, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
-import { Network } from "@aptos-labs/ts-sdk";
+import { useEffect, useState, useRef } from "react";
 
 export function WalletConnect() {
   const { connect, disconnect, account, connected, wallets, network } = useWallet();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
+  const hasShownToast = useRef(false);
 
   useEffect(() => {
     if (connected && network) {
-      // Check if network is Mainnet (chainId 1) instead of Testnet (chainId 2)
-      // Note: network.name might be "mainnet" or "testnet" depending on the wallet
-      // chainId can be number or string depending on the wallet/sdk version
-      const isTestnet = network.name.toLowerCase().includes("testnet") || network.chainId.toString() === "2";
+      // Check if network is Testnet (chainId 2)
+      // Some wallets return chainId as number, some as string
+      const chainId = network.chainId?.toString();
+      const name = network.name?.toLowerCase();
+      
+      // Robust check for Testnet
+      const isTestnet = 
+        (name && name.includes("testnet")) || 
+        chainId === "2";
+        
       setIsWrongNetwork(!isTestnet);
       
       if (!isTestnet) {
-        toast.warning("Wrong Network Detected", {
-          description: "Please switch your wallet to Aptos Testnet to use this app.",
-          duration: 5000,
-        });
+        if (!hasShownToast.current) {
+          toast.warning("Wrong Network Detected", {
+            description: `You are connected to ${network.name || "Unknown Network"} (Chain ID: ${network.chainId}). Please switch to Aptos Testnet.`,
+            duration: 8000,
+          });
+          hasShownToast.current = true;
+        }
+      } else {
+        hasShownToast.current = false; // Reset if they switch to correct network
       }
     }
   }, [connected, network]);

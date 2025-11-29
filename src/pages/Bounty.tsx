@@ -21,7 +21,7 @@ const TREASURY_ADDRESS = "0x98a5e0efcf102175e75dd459068ade9e845dd61291e6197d1cf0
 export default function BountyPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { signAndSubmitTransaction, account } = useWallet();
+  const { signAndSubmitTransaction, account, network } = useWallet();
   
   // Convex hooks
   const bounty = useQuery(api.bounties.get, { id: id as Id<"bounties"> });
@@ -50,6 +50,16 @@ export default function BountyPage() {
     if (!account) {
       toast.error("Please connect your wallet first");
       return;
+    }
+
+    if (network) {
+      const isTestnet = network.name?.toLowerCase().includes("testnet") || network.chainId?.toString() === "2";
+      if (!isTestnet) {
+        toast.error("Wrong Network", { 
+          description: `You are on ${network.name}. Please switch to Aptos Testnet to place a bet.` 
+        });
+        return;
+      }
     }
 
     try {
