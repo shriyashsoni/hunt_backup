@@ -336,8 +336,10 @@ export default function BountyPage() {
                     <div className="flex flex-col gap-2 mt-2 border-t border-yellow-600/20 pt-2 w-full">
                         <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                             <p className="text-xs md:text-sm">
-                                1. Find <strong>market_id</strong> in "Events" or "Changes" tab on Explorer.<br/>
-                                2. Enter ID below.
+                                1. Open Explorer.<br/>
+                                2. Check <strong>Events</strong> tab for <code>market_id</code>.<br/>
+                                3. If missing, check <strong>Changes</strong> tab for <code>Market</code> resource &rarr; <code>id</code>.<br/>
+                                4. Enter ID below.
                             </p>
                             <div className="flex items-center gap-2 w-full md:w-auto">
                                 <input 
@@ -364,8 +366,8 @@ export default function BountyPage() {
                         <div className="mt-4 p-2 bg-yellow-200/50 border border-yellow-600/30 rounded">
                             <p className="text-xs font-bold mb-2">Troubleshooting:</p>
                             <ul className="text-xs list-disc list-inside space-y-1">
-                                <li>If the transaction status is <strong>Failed</strong>, the market was not created. You should delete this bounty.</li>
-                                <li>If the transaction succeeded but you can't find the ID, check the <strong>Changes</strong> tab for a "Market" resource.</li>
+                                <li>If <strong>Status: Failed</strong>, the market was not created. Delete this bounty.</li>
+                                <li>If <strong>Status: Success</strong> but no Event: Go to <strong>Changes</strong> tab. Look for a resource named <code>...::market::Market</code>. The <code>id</code> field inside it is your Market ID.</li>
                             </ul>
                             <div className="mt-2 flex justify-between items-center">
                                 <button 

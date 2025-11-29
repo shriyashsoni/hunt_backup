@@ -66,3 +66,16 @@ Once deployed, you need to update the frontend to point to your new contract add
 - `place_bet(market_id: u64, amount: u64, is_real: bool)`: Stakes APT on an outcome.
 - `resolve_market(market_id: u64, is_real: bool)`: **Admin Only**. Resolves the market (called by Veritas Oracle).
 - `claim_reward(market_id: u64)`: Winners call this to withdraw their share of the pool.
+
+## Troubleshooting & Redeployment
+
+### When to Republish
+You only need to run `aptos move publish` again if:
+1. You modified the Move code (e.g., added new events or fixed logic).
+2. You want to deploy a fresh instance of the contract.
+
+### After Republishing
+**Important:** Every time you publish, you might get a new object address.
+1. Copy the new address from the terminal output.
+2. Update `src/lib/aptos.ts`:
+   
