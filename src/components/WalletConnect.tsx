@@ -1,18 +1,19 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { NeoButton } from "./NeoComponents";
-import { Wallet, LogOut, AlertTriangle } from "lucide-react";
+import { Wallet, LogOut, AlertTriangle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState, useRef } from "react";
+import { Network } from "@aptos-labs/ts-sdk";
 
 export function WalletConnect() {
-  const { connect, disconnect, account, connected, wallets, network } = useWallet();
+  // @ts-ignore - changeNetwork might not be in the type definition depending on version
+  const { connect, disconnect, account, connected, wallets, network, changeNetwork } = useWallet();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const hasShownToast = useRef(false);
 
   useEffect(() => {
     if (connected && network) {
       // Check if network is Testnet (chainId 2)
-      // Some wallets return chainId as number, some as string
       const chainId = network.chainId?.toString();
       const name = network.name?.toLowerCase();
       
@@ -28,6 +29,10 @@ export function WalletConnect() {
           toast.warning("Wrong Network Detected", {
             description: `You are connected to ${network.name || "Unknown Network"} (Chain ID: ${network.chainId}). Please switch to Aptos Testnet.`,
             duration: 8000,
+            action: {
+              label: "Switch Network",
+              onClick: handleSwitchNetwork
+            }
           });
           hasShownToast.current = true;
         }
@@ -53,18 +58,37 @@ export function WalletConnect() {
     }
   };
 
+  const handleSwitchNetwork = async () => {
+    try {
+      if (changeNetwork) {
+        await changeNetwork(Network.TESTNET);
+        toast.success("Switched to Aptos Testnet");
+      } else {
+        toast.error("Automatic switch failed. Please switch to Testnet manually in your wallet.");
+      }
+    } catch (error) {
+      console.error("Failed to switch network:", error);
+      toast.error("Failed to switch network. Please do it manually in your wallet.");
+    }
+  };
+
   if (connected && account) {
     return (
       <div className="flex items-center gap-2">
         {isWrongNetwork && (
-          <div className="hidden md:flex items-center gap-1 text-yellow-600 bg-yellow-100 px-2 py-1 border-2 border-yellow-600 font-bold text-xs animate-pulse">
+          <NeoButton 
+            size="sm" 
+            variant="destructive" 
+            className="hidden md:flex items-center gap-1 font-bold text-xs animate-pulse"
+            onClick={handleSwitchNetwork}
+          >
             <AlertTriangle className="w-3 h-3" />
             <span>SWITCH TO TESTNET</span>
-          </div>
+          </NeoButton>
         )}
         <NeoButton 
           variant="outline" 
-          className={`flex items-center gap-2 ${isWrongNetwork ? "border-red-500 text-red-500" : ""}`}
+          className={`flex items-center gap-2 ${isWrongNetwork ? "border-red-500 text-red-500 bg-red-50" : ""}`}
           onClick={disconnect}
         >
           <Wallet className="w-4 h-4" />

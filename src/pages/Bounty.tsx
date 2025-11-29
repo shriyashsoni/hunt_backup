@@ -14,6 +14,7 @@ import { Footer } from "@/components/Footer";
 import { getYoutubeThumbnail, isYoutubeUrl, getYoutubeId } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { MODULE_ADDRESS, MODULE_NAME } from "@/lib/aptos";
+import { Network } from "@aptos-labs/ts-sdk";
 
 // Treasury address to collect bets (Demo address)
 const TREASURY_ADDRESS = "0x98a5e0efcf102175e75dd459068ade9e845dd61291e6197d1cf01e3d6c590e93";
@@ -21,7 +22,8 @@ const TREASURY_ADDRESS = "0x98a5e0efcf102175e75dd459068ade9e845dd61291e6197d1cf0
 export default function BountyPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { signAndSubmitTransaction, account, network } = useWallet();
+  // @ts-ignore
+  const { signAndSubmitTransaction, account, network, changeNetwork } = useWallet();
   
   // Convex hooks
   const bounty = useQuery(api.bounties.get, { id: id as Id<"bounties"> });
@@ -46,20 +48,38 @@ export default function BountyPage() {
 
   const youtubeId = isYoutubeUrl(bounty.contentUrl) ? getYoutubeId(bounty.contentUrl) : null;
 
+  const isWrongNetwork = network && (
+    (network.name && !network.name.toLowerCase().includes("testnet")) && 
+    network.chainId?.toString() !== "2"
+  );
+
+  const handleSwitchNetwork = async () => {
+    try {
+      if (changeNetwork) {
+        await changeNetwork(Network.TESTNET);
+      } else {
+        toast.error("Please switch to Testnet manually in your wallet");
+      }
+    } catch (error) {
+      toast.error("Failed to switch network");
+    }
+  };
+
   const handleBet = async (side: boolean) => {
     if (!account) {
       toast.error("Please connect your wallet first");
       return;
     }
 
-    if (network) {
-      const isTestnet = network.name?.toLowerCase().includes("testnet") || network.chainId?.toString() === "2";
-      if (!isTestnet) {
-        toast.error("Wrong Network", { 
-          description: `You are on ${network.name}. Please switch to Aptos Testnet to place a bet.` 
-        });
-        return;
-      }
+    if (isWrongNetwork) {
+      toast.error("Wrong Network", { 
+        description: `You are on ${network?.name}. Please switch to Aptos Testnet to place a bet.`,
+        action: {
+          label: "Switch",
+          onClick: handleSwitchNetwork
+        }
+      });
+      return;
     }
 
     try {
@@ -159,6 +179,18 @@ export default function BountyPage() {
               ← Back to Dashboard
             </NeoButton>
             
+            {isWrongNetwork && (
+              <div className="bg-red-100 border-2 border-red-500 text-red-700 p-4 mb-4 flex justify-between items-center">
+                <div className="flex items-center gap-2 font-bold">
+                  <ShieldAlert className="w-5 h-5" />
+                  <span>WRONG NETWORK: You are on {network?.name}. Switch to Testnet to bet.</span>
+                </div>
+                <NeoButton size="sm" variant="destructive" onClick={handleSwitchNetwork}>
+                  Switch Network
+                </NeoButton>
+              </div>
+            )}
+
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <h1 className="text-3xl md:text-4xl font-black uppercase">Bounty #{bounty._id.slice(-4)}</h1>
               <div className="flex flex-wrap gap-2">
@@ -278,7 +310,7 @@ export default function BountyPage() {
 
             {/* Betting Interface */}
             <div className="grid md:grid-cols-2 gap-8">
-              <NeoCard className={`border-green-500 ${bounty.isResolved ? 'opacity-50' : ''}`}>
+              <NeoCard className={`border-green-500 ${bounty.isResolved || isWrongNetwork ? 'opacity-50' : ''}`}>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-2xl font-black uppercase text-green-600">Real</h3>
                   <ShieldCheck className="w-8 h-8 text-green-600" />
@@ -292,19 +324,19 @@ export default function BountyPage() {
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
                     className="flex-1 border-2 border-black p-2 font-mono font-bold"
-                    disabled={bounty.isResolved}
+                    disabled={bounty.isResolved || !!isWrongNetwork}
                   />
                   <NeoButton 
                     className="bg-green-500 hover:bg-green-600 text-white flex-1"
                     onClick={() => handleBet(true)}
-                    disabled={bounty.isResolved}
+                    disabled={bounty.isResolved || !!isWrongNetwork}
                   >
                     Bet Real
                   </NeoButton>
                 </div>
               </NeoCard>
 
-              <NeoCard className={`border-red-500 ${bounty.isResolved ? 'opacity-50' : ''}`}>
+              <NeoCard className={`border-red-500 ${bounty.isResolved || isWrongNetwork ? 'opacity-50' : ''}`}>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-2xl font-black uppercase text-red-600">AI Generated</h3>
                   <ShieldAlert className="w-8 h-8 text-red-600" />
@@ -318,12 +350,12 @@ export default function BountyPage() {
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
                     className="flex-1 border-2 border-black p-2 font-mono font-bold"
-                    disabled={bounty.isResolved}
+                    disabled={bounty.isResolved || !!isWrongNetwork}
                   />
                   <NeoButton 
                     className="bg-red-500 hover:bg-red-600 text-white flex-1"
                     onClick={() => handleBet(false)}
-                    disabled={bounty.isResolved}
+                    disabled={bounty.isResolved || !!isWrongNetwork}
                   >
                     Bet AI
                   </NeoButton>

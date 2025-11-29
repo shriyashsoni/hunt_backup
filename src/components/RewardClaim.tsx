@@ -8,12 +8,29 @@ import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import { MODULE_ADDRESS, MODULE_NAME } from "@/lib/aptos";
+import { Network } from "@aptos-labs/ts-sdk";
 
 export function RewardClaim() {
   const claims = useQuery(api.claims.list);
   const markClaimed = useMutation(api.claims.markClaimed);
-  const { signAndSubmitTransaction, account, network } = useWallet();
+  // @ts-ignore
+  const { signAndSubmitTransaction, account, network, changeNetwork } = useWallet();
   const [claimingId, setClaimingId] = useState<string | null>(null);
+
+  const isWrongNetwork = network && (
+    (network.name && !network.name.toLowerCase().includes("testnet")) && 
+    network.chainId?.toString() !== "2"
+  );
+
+  const handleSwitchNetwork = async () => {
+    try {
+      if (changeNetwork) {
+        await changeNetwork(Network.TESTNET);
+      }
+    } catch (error) {
+      toast.error("Please switch to Testnet manually");
+    }
+  };
 
   const handleClaim = async (claim: any) => {
     if (!account) {
@@ -21,14 +38,15 @@ export function RewardClaim() {
       return;
     }
 
-    if (network) {
-      const isTestnet = network.name?.toLowerCase().includes("testnet") || network.chainId?.toString() === "2";
-      if (!isTestnet) {
-        toast.error("Wrong Network", { 
-          description: `You are on ${network.name}. Please switch to Aptos Testnet to claim rewards.` 
-        });
-        return;
-      }
+    if (isWrongNetwork) {
+      toast.error("Wrong Network", { 
+        description: `You are on ${network?.name}. Please switch to Aptos Testnet to claim rewards.`,
+        action: {
+          label: "Switch",
+          onClick: handleSwitchNetwork
+        }
+      });
+      return;
     }
 
     setClaimingId(claim._id);
@@ -70,9 +88,16 @@ export function RewardClaim() {
 
   return (
     <NeoCard className="bg-yellow-400/20 border-yellow-600 mb-8">
-      <div className="flex items-center gap-2 mb-4">
-        <Gift className="w-6 h-6 text-yellow-600" />
-        <h2 className="text-xl font-black uppercase text-yellow-800">Claimable Rewards</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Gift className="w-6 h-6 text-yellow-600" />
+          <h2 className="text-xl font-black uppercase text-yellow-800">Claimable Rewards</h2>
+        </div>
+        {isWrongNetwork && (
+          <NeoButton size="sm" variant="destructive" onClick={handleSwitchNetwork}>
+            Switch to Testnet
+          </NeoButton>
+        )}
       </div>
       
       <div className="space-y-4">
@@ -88,7 +113,7 @@ export function RewardClaim() {
               size="sm" 
               className="bg-green-500 hover:bg-green-600 text-white"
               onClick={() => handleClaim(claim)}
-              disabled={claimingId === claim._id}
+              disabled={claimingId === claim._id || !!isWrongNetwork}
             >
               {claimingId === claim._id ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
