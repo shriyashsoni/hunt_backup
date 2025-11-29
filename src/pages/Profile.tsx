@@ -2,12 +2,36 @@ import { Navbar } from "@/components/Navbar";
 import { NeoButton, NeoCard } from "@/components/NeoComponents";
 import { useAuth } from "@/hooks/use-auth";
 import { useParams } from "react-router";
-import { User, Copy, Wallet, Award } from "lucide-react";
+import { User, Copy, Wallet, Award, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { getAptBalance } from "@/lib/aptos";
 
 export default function Profile() {
   const { address } = useParams();
   const { user } = useAuth();
+  const [realAptBalance, setRealAptBalance] = useState<number | null>(null);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+
+  const targetAddress = address || user?._id;
+
+  const fetchBalance = async () => {
+    if (!targetAddress || targetAddress.length < 60) return; // Basic check for Aptos address length (usually 66 chars with 0x)
+    
+    setIsLoadingBalance(true);
+    try {
+      const balance = await getAptBalance(targetAddress);
+      setRealAptBalance(balance);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingBalance(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBalance();
+  }, [targetAddress]);
 
   const copyReferral = () => {
     navigator.clipboard.writeText(`https://deepfake-hunters.app/bounty/1?ref=${user?._id}`);
@@ -23,9 +47,9 @@ export default function Profile() {
           <div className="w-20 h-20 bg-primary border-4 border-black flex items-center justify-center">
             <User className="w-10 h-10 text-white" />
           </div>
-          <div>
+          <div className="overflow-hidden">
             <h1 className="text-3xl font-black uppercase">Hunter Profile</h1>
-            <p className="font-mono text-muted-foreground">{address || user?._id}</p>
+            <p className="font-mono text-muted-foreground truncate max-w-[300px] md:max-w-full">{targetAddress}</p>
           </div>
         </div>
 
@@ -39,11 +63,23 @@ export default function Profile() {
           </NeoCard>
           
           <NeoCard className="bg-secondary/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Wallet className="w-5 h-5" />
-              <h3 className="font-bold uppercase">APT Balance</h3>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                <h3 className="font-bold uppercase">APT Balance</h3>
+              </div>
+              <button onClick={fetchBalance} className="hover:rotate-180 transition-transform">
+                <RefreshCw className={`w-4 h-4 ${isLoadingBalance ? 'animate-spin' : ''}`} />
+              </button>
             </div>
-            <p className="text-3xl font-black">{user?.aptBalance || 0} APT</p>
+            <div className="flex flex-col">
+              <p className="text-3xl font-black">
+                {realAptBalance !== null ? realAptBalance.toFixed(4) : (user?.aptBalance || 0)} APT
+              </p>
+              {realAptBalance !== null && (
+                <span className="text-xs font-mono text-muted-foreground">Live from Testnet</span>
+              )}
+            </div>
           </NeoCard>
 
           <NeoCard className="bg-accent/20">

@@ -5,11 +5,25 @@ import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
-import { Trophy, Plus, Clock, AlertTriangle } from "lucide-react";
+import { Trophy, Plus, Clock, AlertTriangle, Activity } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getBlockHeight } from "@/lib/aptos";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const bounties = useQuery(api.bounties.list);
+  const [blockHeight, setBlockHeight] = useState<string>("Loading...");
+
+  useEffect(() => {
+    const updateHeight = async () => {
+      const height = await getBlockHeight();
+      if (height) setBlockHeight(height);
+    };
+    
+    updateHeight();
+    const interval = setInterval(updateHeight, 5000); // Update every 5s
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -30,6 +44,13 @@ export default function Dashboard() {
                 <div>
                   <p className="text-sm font-bold text-muted-foreground">PAT Balance</p>
                   <p className="text-3xl font-black text-primary">{user?.patBalance || 0} PAT</p>
+                </div>
+                <div className="pt-2 border-t-2 border-black/10">
+                   <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-1">
+                      <Activity className="w-3 h-3" />
+                      <span>Aptos Testnet Height</span>
+                   </div>
+                   <p className="font-mono font-bold">{blockHeight}</p>
                 </div>
                 <Link to="/create-bounty">
                   <NeoButton className="w-full mt-4">
