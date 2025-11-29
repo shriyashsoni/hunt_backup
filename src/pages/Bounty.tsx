@@ -10,6 +10,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useWallet, InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import { analyzeContent } from "@/lib/veritas";
+import { Footer } from "@/components/Footer";
 
 // Treasury address to collect bets (Demo address)
 const TREASURY_ADDRESS = "0x98a5e0efcf102175e75dd459068ade9e845dd61291e6197d1cf01e3d6c590e93";
@@ -122,175 +123,183 @@ export default function BountyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="container mx-auto p-4 md:p-8 max-w-4xl">
-        <div className="mb-8">
-          <NeoButton variant="ghost" onClick={() => navigate("/dashboard")} className="mb-4">
-            ← Back to Dashboard
-          </NeoButton>
-          
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <h1 className="text-4xl font-black uppercase">Bounty #{bounty._id.slice(-4)}</h1>
-            <div className="flex gap-2">
-              <NeoBadge variant="default" className="bg-blue-600 text-white border-blue-900">
-                <Database className="w-3 h-3 mr-1" />
-                SHELBY STORAGE
-              </NeoBadge>
-              <NeoBadge 
-                variant={bounty.status === 'pending' ? 'warning' : bounty.status === 'verified_real' ? 'success' : 'danger'}
-                className="text-lg px-4 py-1"
-              >
-                {bounty.status === 'pending' ? 'VERIFICATION PENDING' : bounty.status === 'verified_real' ? 'VERIFIED REAL' : 'VERIFIED AI'}
-              </NeoBadge>
+      <main className="container mx-auto p-4 md:p-8 max-w-4xl flex-1">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="mb-8">
+            <NeoButton variant="ghost" onClick={() => navigate("/dashboard")} className="mb-4">
+              ← Back to Dashboard
+            </NeoButton>
+            
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <h1 className="text-3xl md:text-4xl font-black uppercase">Bounty #{bounty._id.slice(-4)}</h1>
+              <div className="flex flex-wrap gap-2">
+                <NeoBadge variant="default" className="bg-blue-600 text-white border-blue-900">
+                  <Database className="w-3 h-3 mr-1" />
+                  SHELBY STORAGE
+                </NeoBadge>
+                <NeoBadge 
+                  variant={bounty.status === 'pending' ? 'warning' : bounty.status === 'verified_real' ? 'success' : 'danger'}
+                  className="text-lg px-4 py-1"
+                >
+                  {bounty.status === 'pending' ? 'VERIFICATION PENDING' : bounty.status === 'verified_real' ? 'VERIFIED REAL' : 'VERIFIED AI'}
+                </NeoBadge>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid gap-8">
-          {/* Content Display */}
-          <NeoCard className="p-0 overflow-hidden bg-black">
-            <div className="relative aspect-video w-full flex items-center justify-center bg-gray-900">
-              <img src={bounty.contentUrl} alt="Content" className="max-h-full max-w-full object-contain" />
-              
-              {/* Overlay for verification status */}
-              <AnimatePresence>
-                {isVerifying && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-10 p-8"
-                  >
-                    <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-                    <h3 className="text-2xl font-bold text-white uppercase tracking-widest mb-4">Veritas AI Scanning...</h3>
-                    <div className="w-full max-w-md space-y-2 font-mono text-sm text-green-400">
-                      {veritasLogs.map((log, i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="truncate"
-                        >
-                          {">"} {log}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
+          <div className="grid gap-8">
+            {/* Content Display */}
+            <NeoCard className="p-0 overflow-hidden bg-black">
+              <div className="relative aspect-video w-full flex items-center justify-center bg-gray-900">
+                <img src={bounty.contentUrl} alt="Content" className="max-h-full max-w-full object-contain" />
                 
-                {bounty.isResolved && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-10 pointer-events-none"
-                  >
-                    <div className={`border-8 ${bounty.isReal ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500'} p-8 transform -rotate-12 bg-black mb-4`}>
-                      <h2 className="text-6xl font-black uppercase tracking-tighter">
-                        {bounty.isReal ? 'REAL' : 'FAKE'}
-                      </h2>
-                    </div>
-                    {bounty.confidence && (
-                      <div className="bg-black border-2 border-white text-white px-4 py-2 font-mono font-bold">
-                        CONFIDENCE: {bounty.confidence}%
+                {/* Overlay for verification status */}
+                <AnimatePresence>
+                  {isVerifying && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-10 p-8"
+                    >
+                      <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
+                      <h3 className="text-2xl font-bold text-white uppercase tracking-widest mb-4 text-center">Veritas AI Scanning...</h3>
+                      <div className="w-full max-w-md space-y-2 font-mono text-sm text-green-400">
+                        {veritasLogs.map((log, i) => (
+                          <motion.div 
+                            key={i}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="truncate"
+                          >
+                            {">"} {log}
+                          </motion.div>
+                        ))}
                       </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </NeoCard>
+                    </motion.div>
+                  )}
+                  
+                  {bounty.isResolved && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-10 pointer-events-none"
+                    >
+                      <div className={`border-8 ${bounty.isReal ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500'} p-8 transform -rotate-12 bg-black mb-4`}>
+                        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">
+                          {bounty.isReal ? 'REAL' : 'FAKE'}
+                        </h2>
+                      </div>
+                      {bounty.confidence && (
+                        <div className="bg-black border-2 border-white text-white px-4 py-2 font-mono font-bold">
+                          CONFIDENCE: {bounty.confidence}%
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </NeoCard>
 
-          {/* Analysis Logs (Post-Resolution) */}
-          {bounty.isResolved && bounty.analysisLog && (
-            <NeoCard className="bg-black text-green-400 font-mono text-sm p-4 border-green-900">
-              <h3 className="text-white font-bold uppercase mb-2 border-b border-gray-800 pb-2">Veritas Analysis Log</h3>
-              <div className="space-y-1">
-                {bounty.analysisLog.map((log: string, i: number) => (
-                  <div key={i}>{">"} {log}</div>
-                ))}
-                <div className="text-white mt-2 pt-2 border-t border-gray-800 font-bold">
-                  {">"} FINAL VERDICT: {bounty.isReal ? "AUTHENTIC CONTENT" : "AI GENERATED CONTENT"}
+            {/* Analysis Logs (Post-Resolution) */}
+            {bounty.isResolved && bounty.analysisLog && (
+              <NeoCard className="bg-black text-green-400 font-mono text-sm p-4 border-green-900">
+                <h3 className="text-white font-bold uppercase mb-2 border-b border-gray-800 pb-2">Veritas Analysis Log</h3>
+                <div className="space-y-1">
+                  {bounty.analysisLog.map((log: string, i: number) => (
+                    <div key={i}>{">"} {log}</div>
+                  ))}
+                  <div className="text-white mt-2 pt-2 border-t border-gray-800 font-bold">
+                    {">"} FINAL VERDICT: {bounty.isReal ? "AUTHENTIC CONTENT" : "AI GENERATED CONTENT"}
+                  </div>
                 </div>
-              </div>
-            </NeoCard>
-          )}
+              </NeoCard>
+            )}
 
-          {/* Betting Interface */}
-          <div className="grid md:grid-cols-2 gap-8">
-            <NeoCard className={`border-green-500 ${bounty.isResolved ? 'opacity-50' : ''}`}>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-black uppercase text-green-600">Real</h3>
-                <ShieldCheck className="w-8 h-8 text-green-600" />
-              </div>
-              <div className="text-4xl font-black mb-2">{bounty.realPool} APT</div>
-              <p className="text-sm text-muted-foreground mb-6">Pool Size</p>
-              
-              <div className="flex gap-2">
-                <input 
-                  type="number" 
-                  value={betAmount}
-                  onChange={(e) => setBetAmount(e.target.value)}
-                  className="flex-1 border-2 border-black p-2 font-mono font-bold"
-                  disabled={bounty.isResolved}
-                />
-                <NeoButton 
-                  className="bg-green-500 hover:bg-green-600 text-white flex-1"
-                  onClick={() => handleBet(true)}
-                  disabled={bounty.isResolved}
-                >
-                  Bet Real
-                </NeoButton>
-              </div>
-            </NeoCard>
+            {/* Betting Interface */}
+            <div className="grid md:grid-cols-2 gap-8">
+              <NeoCard className={`border-green-500 ${bounty.isResolved ? 'opacity-50' : ''}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-2xl font-black uppercase text-green-600">Real</h3>
+                  <ShieldCheck className="w-8 h-8 text-green-600" />
+                </div>
+                <div className="text-4xl font-black mb-2">{bounty.realPool} APT</div>
+                <p className="text-sm text-muted-foreground mb-6">Pool Size</p>
+                
+                <div className="flex gap-2">
+                  <input 
+                    type="number" 
+                    value={betAmount}
+                    onChange={(e) => setBetAmount(e.target.value)}
+                    className="flex-1 border-2 border-black p-2 font-mono font-bold"
+                    disabled={bounty.isResolved}
+                  />
+                  <NeoButton 
+                    className="bg-green-500 hover:bg-green-600 text-white flex-1"
+                    onClick={() => handleBet(true)}
+                    disabled={bounty.isResolved}
+                  >
+                    Bet Real
+                  </NeoButton>
+                </div>
+              </NeoCard>
 
-            <NeoCard className={`border-red-500 ${bounty.isResolved ? 'opacity-50' : ''}`}>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-black uppercase text-red-600">AI Generated</h3>
-                <ShieldAlert className="w-8 h-8 text-red-600" />
-              </div>
-              <div className="text-4xl font-black mb-2">{bounty.aiPool} APT</div>
-              <p className="text-sm text-muted-foreground mb-6">Pool Size</p>
-              
-              <div className="flex gap-2">
-                <input 
-                  type="number" 
-                  value={betAmount}
-                  onChange={(e) => setBetAmount(e.target.value)}
-                  className="flex-1 border-2 border-black p-2 font-mono font-bold"
-                  disabled={bounty.isResolved}
-                />
+              <NeoCard className={`border-red-500 ${bounty.isResolved ? 'opacity-50' : ''}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-2xl font-black uppercase text-red-600">AI Generated</h3>
+                  <ShieldAlert className="w-8 h-8 text-red-600" />
+                </div>
+                <div className="text-4xl font-black mb-2">{bounty.aiPool} APT</div>
+                <p className="text-sm text-muted-foreground mb-6">Pool Size</p>
+                
+                <div className="flex gap-2">
+                  <input 
+                    type="number" 
+                    value={betAmount}
+                    onChange={(e) => setBetAmount(e.target.value)}
+                    className="flex-1 border-2 border-black p-2 font-mono font-bold"
+                    disabled={bounty.isResolved}
+                  />
+                  <NeoButton 
+                    className="bg-red-500 hover:bg-red-600 text-white flex-1"
+                    onClick={() => handleBet(false)}
+                    disabled={bounty.isResolved}
+                  >
+                    Bet AI
+                  </NeoButton>
+                </div>
+              </NeoCard>
+            </div>
+
+            {/* Admin Panel */}
+            <NeoCard className="bg-gray-100 border-dashed">
+              <h3 className="font-bold uppercase mb-4 text-gray-500">Admin Controls (Demo Only)</h3>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                  <span className="font-mono text-sm">Veritas Oracle Online</span>
+                </div>
                 <NeoButton 
-                  className="bg-red-500 hover:bg-red-600 text-white flex-1"
-                  onClick={() => handleBet(false)}
-                  disabled={bounty.isResolved}
+                  onClick={handleSimulateVerification}
+                  disabled={isVerifying || bounty.isResolved}
+                  variant="outline"
+                  className="w-full md:w-auto"
                 >
-                  Bet AI
+                  {isVerifying ? 'Verifying...' : 'Trigger Veritas Verification'}
                 </NeoButton>
               </div>
             </NeoCard>
           </div>
-
-          {/* Admin Panel */}
-          <NeoCard className="bg-gray-100 border-dashed">
-            <h3 className="font-bold uppercase mb-4 text-gray-500">Admin Controls (Demo Only)</h3>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                <span className="font-mono text-sm">Veritas Oracle Online</span>
-              </div>
-              <NeoButton 
-                onClick={handleSimulateVerification}
-                disabled={isVerifying || bounty.isResolved}
-                variant="outline"
-              >
-                {isVerifying ? 'Verifying...' : 'Trigger Veritas Verification'}
-              </NeoButton>
-            </div>
-          </NeoCard>
-        </div>
+        </motion.div>
       </main>
+      <Footer />
     </div>
   );
 }

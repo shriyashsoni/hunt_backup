@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { getBlockHeight, getAptBalance } from "@/lib/aptos";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { RewardClaim } from "@/components/RewardClaim";
+import { Footer } from "@/components/Footer";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -42,11 +43,16 @@ export default function Dashboard() {
   }, [connected, account]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="container mx-auto p-4 md:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="container mx-auto p-4 md:p-8 flex-1">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
           
           {/* Left Panel - User Stats */}
           <div className="lg:col-span-3 space-y-6">
@@ -105,22 +111,25 @@ export default function Dashboard() {
             
             <div className="grid gap-6">
               {bounties === undefined ? (
-                 <div className="text-center py-10">Loading bounties...</div>
+                 <div className="text-center py-10 flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="font-bold text-muted-foreground">Loading bounties...</p>
+                 </div>
               ) : bounties.length === 0 ? (
                  <div className="text-center py-10">No active bounties found. Create one!</div>
               ) : (
-                bounties.map((bounty) => (
+                bounties.map((bounty, index) => (
                 <motion.div
                   key={bounty._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
                   whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
                 >
                   <div onClick={() => navigate(`/bounty/${bounty._id}`)}>
                     <NeoCard className="group cursor-pointer hover:bg-accent/5 transition-colors">
                       <div className="flex flex-col md:flex-row gap-4">
-                        <div className="w-full md:w-48 h-32 bg-gray-200 border-2 border-black overflow-hidden relative">
+                        <div className="w-full md:w-48 h-48 md:h-32 bg-gray-200 border-2 border-black overflow-hidden relative">
                           <img src={bounty.contentUrl} alt="Bounty Content" className="w-full h-full object-cover" />
                           <div className="absolute top-2 left-2">
                             <NeoBadge variant={bounty.status === 'pending' ? 'warning' : bounty.status === 'verified_real' ? 'success' : 'danger'}>
@@ -129,9 +138,9 @@ export default function Dashboard() {
                           </div>
                         </div>
                         <div className="flex-1">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="text-xl font-bold">Bounty #{bounty._id.slice(-4)}</h3>
-                            <div className="flex items-center text-sm font-bold text-muted-foreground">
+                          <div className="flex flex-col md:flex-row justify-between items-start mb-2 gap-2">
+                            <h3 className="text-xl font-bold truncate w-full">Bounty #{bounty._id.slice(-4)}</h3>
+                            <div className="flex items-center text-sm font-bold text-muted-foreground whitespace-nowrap">
                               <Clock className="w-4 h-4 mr-1" />
                               {Math.max(0, Math.ceil((bounty.deadline - Date.now()) / 3600000))}h left
                             </div>
@@ -188,8 +197,9 @@ export default function Dashboard() {
             </NeoCard>
           </div>
           
-        </div>
+        </motion.div>
       </main>
+      <Footer />
     </div>
   );
 }

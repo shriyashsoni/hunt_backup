@@ -8,6 +8,8 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { uploadToShelby } from "@/lib/shelby";
 import { useRef } from "react";
+import { Footer } from "@/components/Footer";
+import { motion } from "framer-motion";
 
 export default function CreateBounty() {
   const navigate = useNavigate();
@@ -65,70 +67,77 @@ export default function CreateBounty() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="container mx-auto p-4 md:p-8 max-w-2xl">
-        <h1 className="text-4xl font-black uppercase mb-8">Create New Bounty</h1>
-        
-        <NeoCard>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block font-bold uppercase mb-2">Content URL</label>
-              <div className="flex gap-2">
-                <div className="bg-gray-100 border-2 border-black p-2 flex items-center justify-center">
-                  <LinkIcon className="w-5 h-5" />
+      <main className="container mx-auto p-4 md:p-8 max-w-2xl flex-1">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-4xl font-black uppercase mb-8">Create New Bounty</h1>
+          
+          <NeoCard>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block font-bold uppercase mb-2">Content URL</label>
+                <div className="flex gap-2">
+                  <div className="bg-gray-100 border-2 border-black p-2 flex items-center justify-center">
+                    <LinkIcon className="w-5 h-5" />
+                  </div>
+                  <input 
+                    type="url" 
+                    placeholder="https://..." 
+                    className="flex-1 border-2 border-black p-2 font-mono"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    required={!url}
+                  />
                 </div>
+                
+                <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-sm">
+                  <p className="text-xs font-bold uppercase text-blue-800 mb-2">Supported Platforms</p>
+                  <div className="flex flex-wrap gap-4 text-sm text-blue-900">
+                    <div className="flex items-center gap-1"><Youtube className="w-4 h-4" /> YouTube</div>
+                    <div className="flex items-center gap-1"><Video className="w-4 h-4" /> TikTok</div>
+                    <div className="flex items-center gap-1"><Instagram className="w-4 h-4" /> Instagram</div>
+                    <div className="flex items-center gap-1"><Twitter className="w-4 h-4" /> X (Twitter)</div>
+                  </div>
+                </div>
+
+                <p className="text-sm text-muted-foreground mt-2">
+                  Paste a link to the image or video. We will archive it on Shelby.
+                </p>
+              </div>
+
+              <div 
+                  className="border-2 border-dashed border-black p-8 text-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors relative"
+                  onClick={() => fileInputRef.current?.click()}
+              >
                 <input 
-                  type="url" 
-                  placeholder="https://..." 
-                  className="flex-1 border-2 border-black p-2 font-mono"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  required={!url}
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept="image/*,video/*"
+                  onChange={handleFileSelect}
                 />
-              </div>
-              
-              <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-sm">
-                <p className="text-xs font-bold uppercase text-blue-800 mb-2">Supported Platforms</p>
-                <div className="flex flex-wrap gap-4 text-sm text-blue-900">
-                  <div className="flex items-center gap-1"><Youtube className="w-4 h-4" /> YouTube</div>
-                  <div className="flex items-center gap-1"><Video className="w-4 h-4" /> TikTok</div>
-                  <div className="flex items-center gap-1"><Instagram className="w-4 h-4" /> Instagram</div>
-                  <div className="flex items-center gap-1"><Twitter className="w-4 h-4" /> X (Twitter)</div>
+                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <p className="font-bold">Or upload file directly</p>
+                <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
+                  <Database className="w-3 h-3" />
+                  <span>Powered by Shelby Storage</span>
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground mt-2">
-                Paste a link to the image or video. We will archive it on Shelby.
-              </p>
-            </div>
-
-            <div 
-                className="border-2 border-dashed border-black p-8 text-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors relative"
-                onClick={() => fileInputRef.current?.click()}
-            >
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*,video/*"
-                onChange={handleFileSelect}
-              />
-              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p className="font-bold">Or upload file directly</p>
-              <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
-                <Database className="w-3 h-3" />
-                <span>Powered by Shelby Storage</span>
-              </div>
-            </div>
-
-            <NeoButton type="submit" className="w-full" disabled={isSubmitting || !url}>
-              {isSubmitting ? "Processing..." : "Create Bounty & Earn 10 PAT"}
-            </NeoButton>
-          </form>
-        </NeoCard>
+              <NeoButton type="submit" className="w-full" disabled={isSubmitting || !url}>
+                {isSubmitting ? "Processing..." : "Create Bounty & Earn 10 PAT"}
+              </NeoButton>
+            </form>
+          </NeoCard>
+        </motion.div>
       </main>
+      <Footer />
     </div>
   );
 }

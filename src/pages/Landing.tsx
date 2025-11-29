@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router";
 import { NeoButton, NeoCard } from "@/components/NeoComponents";
 import { ArrowRight, Shield, Zap, Trophy } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -111,14 +112,7 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer className="bg-black text-white py-12 border-t-4 border-black">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-black uppercase mb-4">Deepfake Hunters</h2>
-          <p className="font-mono text-gray-400">
-            Built for the Aptos & Photon Hackathon.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
