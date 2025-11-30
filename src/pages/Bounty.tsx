@@ -138,6 +138,13 @@ export default function BountyPage() {
       // 2. Search Changes (Write Set) if not found in events
       if (foundMarketId === undefined && (txn as any).changes) {
          for (const change of (txn as any).changes) {
+            // Check if this is a module publication (Contract Deployment)
+            if (change.type === "write_module" && change.data && change.data.name === MODULE_NAME) {
+                toast.warning("This looks like a Contract Deployment transaction, not a Bounty Creation transaction.", {
+                    description: "Please find the transaction where you called 'create_market'."
+                });
+            }
+
             // Look for resource creation that might contain market_id
             if (change.data && change.data.data) {
                 if (change.data.data.market_id) {

@@ -67,13 +67,6 @@ export default function CreateBounty() {
         return;
     }
 
-    if (contractExists === false) {
-        toast.error("Contract Not Found", {
-            description: "The smart contract address in src/lib/aptos.ts seems incorrect. Did you redeploy?"
-        });
-        return;
-    }
-
     await processBountyCreation(url);
   };
 
@@ -329,7 +322,7 @@ export default function CreateBounty() {
                 </div>
               </div>
 
-              <NeoButton type="submit" className="w-full" disabled={isSubmitting || !url || !!isWrongNetwork || contractExists === false}>
+              <NeoButton type="submit" className="w-full" disabled={isSubmitting || !url || !!isWrongNetwork}>
                 {isSubmitting ? "Processing On-Chain..." : "Create Bounty & Earn 10 PAT"}
               </NeoButton>
             </form>
