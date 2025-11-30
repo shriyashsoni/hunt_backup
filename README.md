@@ -1,4 +1,103 @@
-## Overview
+<div align="center">
+
+# 🎯 Aptos Hunt
+
+### The First Web3 Prediction Market for Content Authenticity
+
+[![Aptos](https://img.shields.io/badge/Aptos-Testnet-00D4AA?style=for-the-badge&logo=aptos&logoColor=white)](https://aptoslabs.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Convex](https://img.shields.io/badge/Convex-Backend-FF6B6B?style=for-the-badge)](https://convex.dev/)
+[![Move](https://img.shields.io/badge/Move-Smart_Contracts-4A90E2?style=for-the-badge)](https://aptos.dev/move/move-on-aptos/)
+
+**Hunt Deepfakes. Earn Crypto. Climb Ranks.**
+
+[Live Demo](#) • [Documentation](#features) • [Smart Contract](https://explorer.aptoslabs.com/account/0x155e43ac5e3c045997eae5fc8ccbcf9ddcc8dbd77849e4e54a40aa7d9dfd9ba9/modules/code/market?network=testnet)
+
+</div>
+
+---
+
+## 🌟 Overview
+
+**Aptos Hunt** is a revolutionary Web3 prediction market where users bet APT tokens on whether viral content is **Real** or **AI-Generated**. Powered by the Aptos blockchain, Veritas AI Oracle, and Shelby Protocol for decentralized storage, Aptos Hunt gamifies content authenticity verification while rewarding truth-seekers.
+
+### 🎮 How It Works
+
+1. **🔍 Create Bounty**: Submit suspicious content (images/videos) to create an on-chain prediction market
+2. **💰 Place Bets**: Stake APT tokens on whether content is Real or AI-Generated
+3. **🤖 AI Verification**: Veritas AI Oracle analyzes content and resolves the market
+4. **🏆 Claim Rewards**: Winners split the losing pool proportionally to their stake
+
+---
+
+## ✨ Key Features
+
+### 🔗 Blockchain Integration
+- **⛓️ Aptos Testnet**: Lightning-fast, low-cost transactions
+- **📜 Smart Contracts**: Custom Move modules for market creation, betting, and reward distribution
+- **👛 Petra Wallet**: Seamless wallet connection with network validation
+- **🔐 On-Chain Verification**: All bets and resolutions recorded immutably
+
+### 🎨 Frontend Experience
+- **🎭 Neo-Brutalist Design**: Bold, high-contrast UI with thick borders and vibrant colors
+- **✨ Framer Motion Animations**: Smooth page transitions and interactive elements
+- **📱 Fully Responsive**: Optimized for desktop, tablet, and mobile
+- **⚡ Real-Time Updates**: Live bounty status and pool updates via Convex
+
+### 🤖 AI & Verification
+- **🧠 Veritas AI Oracle**: Advanced content analysis for authenticity detection
+- **📊 Confidence Scoring**: Transparent AI confidence levels (0-100%)
+- **📝 Analysis Logs**: Detailed verification process logs for transparency
+
+### 💾 Decentralized Storage
+- **☁️ Shelby Protocol**: IPFS-based content archival on Shelbynet
+- **🔗 Content Integrity**: Immutable CID (Content Identifier) for each upload
+- **🌐 Permanent Storage**: Content remains accessible even if original source is removed
+
+### 🎁 Tokenomics
+- **💎 APT (Aptos Token)**: Primary betting currency
+- **🪙 PAT (Platform Token)**: Reward token for bounty creators and active users
+- **💸 Winner-Takes-All**: Proportional reward distribution to correct predictors
+
+---
+
+## 🛠️ Technology Stack
+
+### **Frontend**
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black&style=flat-square) | UI Framework | 19.1.0 |
+| ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white&style=flat-square) | Type Safety | 5.8.3 |
+| ![Vite](https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=flat-square) | Build Tool | 6.3.5 |
+| ![React Router](https://img.shields.io/badge/-React_Router-CA4245?logo=react-router&logoColor=white&style=flat-square) | Routing | 7.6.1 |
+| ![Tailwind CSS](https://img.shields.io/badge/-Tailwind_CSS-06B6D4?logo=tailwind-css&logoColor=white&style=flat-square) | Styling | 4.1.8 |
+| ![Shadcn UI](https://img.shields.io/badge/-Shadcn_UI-000000?logo=shadcnui&logoColor=white&style=flat-square) | Component Library | Latest |
+| ![Framer Motion](https://img.shields.io/badge/-Framer_Motion-0055FF?logo=framer&logoColor=white&style=flat-square) | Animations | 12.15.0 |
+
+### **Blockchain**
+| Technology | Purpose |
+|------------|---------|
+| ![Aptos](https://img.shields.io/badge/-Aptos-00D4AA?style=flat-square) | Layer 1 Blockchain (Testnet) |
+| ![Move](https://img.shields.io/badge/-Move-4A90E2?style=flat-square) | Smart Contract Language |
+| ![Petra Wallet](https://img.shields.io/badge/-Petra_Wallet-FF6B6B?style=flat-square) | Wallet Adapter |
+| **Aptos SDK** | Blockchain Interaction (v5.1.5) |
+
+### **Backend & Database**
+| Technology | Purpose |
+|------------|---------|
+| ![Convex](https://img.shields.io/badge/-Convex-FF6B6B?style=flat-square) | Serverless Backend & Real-Time Database |
+| **Convex Auth** | Anonymous + Wallet Authentication |
+
+### **Integrations**
+| Service | Purpose | API Key |
+|---------|---------|---------|
+| **Shelby Protocol** | Decentralized Storage (Shelbynet) | `aptoslabs_Lep6hBwxZpV_...` |
+| **Veritas AI** | Content Authenticity Oracle | Mock Implementation |
+
+---
+
+## 📦 Project Structure
 
 This project uses the following tech stack:
 - Vite
@@ -265,3 +364,5 @@ When using convex, make sure:
 - This includes importing generated files like `@/convex/_generated/server`, `@/convex/_generated/api`
 - Remember to import functions like useQuery, useMutation, useAction, etc. from `convex/react`
 - NEVER have return type validators.
+
+</initial_code>
