@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router";
 import { NeoButton, NeoCard } from "@/components/NeoComponents";
-import { ArrowRight, Shield, Zap, Trophy } from "lucide-react";
+import { ArrowRight, Shield, Zap, Trophy, Wallet, Database } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { useState, useEffect } from "react";
 
@@ -136,6 +136,119 @@ export default function Landing() {
               View Bounties
             </NeoButton>
           </motion.div>
+        </section>
+
+        {/* How It Works Section */}
+        <section className="py-20 bg-white border-y-4 border-black">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl md:text-5xl font-black uppercase mb-4 text-center">How It Works</h2>
+            <p className="text-center text-lg font-bold text-muted-foreground mb-16 max-w-2xl mx-auto">
+              Join the fight against deepfakes in 4 simple steps. Earn crypto while protecting truth.
+            </p>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Step 1 */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+              >
+                <NeoCard className="bg-blue-50 border-blue-500 h-full">
+                  <div className="flex items-center justify-center w-16 h-16 bg-blue-500 text-white text-3xl font-black mb-4 border-2 border-black">
+                    1
+                  </div>
+                  <h3 className="text-2xl font-black uppercase mb-3 text-blue-700">Connect Wallet</h3>
+                  <p className="font-bold text-gray-700 mb-4">
+                    Link your Petra Wallet to the Aptos Testnet. Your wallet is your identity—no email required.
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-blue-600 font-mono">
+                    <Wallet className="w-4 h-4" />
+                    <span>Petra Wallet Required</span>
+                  </div>
+                </NeoCard>
+              </motion.div>
+
+              {/* Step 2 */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                <NeoCard className="bg-green-50 border-green-500 h-full">
+                  <div className="flex items-center justify-center w-16 h-16 bg-green-500 text-white text-3xl font-black mb-4 border-2 border-black">
+                    2
+                  </div>
+                  <h3 className="text-2xl font-black uppercase mb-3 text-green-700">Create Bounty</h3>
+                  <p className="font-bold text-gray-700 mb-4">
+                    Submit suspicious content (images/videos). We archive it on Shelby Protocol and create an on-chain market.
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-green-600 font-mono">
+                    <Database className="w-4 h-4" />
+                    <span>Earn 10 PAT Tokens</span>
+                  </div>
+                </NeoCard>
+              </motion.div>
+
+              {/* Step 3 */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <NeoCard className="bg-yellow-50 border-yellow-500 h-full">
+                  <div className="flex items-center justify-center w-16 h-16 bg-yellow-500 text-white text-3xl font-black mb-4 border-2 border-black">
+                    3
+                  </div>
+                  <h3 className="text-2xl font-black uppercase mb-3 text-yellow-700">Place Bets</h3>
+                  <p className="font-bold text-gray-700 mb-4">
+                    Stake APT tokens on whether content is Real or AI-Generated. All bets are recorded on-chain.
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-yellow-600 font-mono">
+                    <Zap className="w-4 h-4" />
+                    <span>Minimum 1 APT</span>
+                  </div>
+                </NeoCard>
+              </motion.div>
+
+              {/* Step 4 */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+              >
+                <NeoCard className="bg-purple-50 border-purple-500 h-full">
+                  <div className="flex items-center justify-center w-16 h-16 bg-purple-500 text-white text-3xl font-black mb-4 border-2 border-black">
+                    4
+                  </div>
+                  <h3 className="text-2xl font-black uppercase mb-3 text-purple-700">Claim Rewards</h3>
+                  <p className="font-bold text-gray-700 mb-4">
+                    Veritas AI resolves the market. Winners split the losing pool proportionally. Claim your APT!
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-purple-600 font-mono">
+                    <Trophy className="w-4 h-4" />
+                    <span>Winner Takes All</span>
+                  </div>
+                </NeoCard>
+              </motion.div>
+            </div>
+
+            {/* Call to Action */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="text-center mt-16"
+            >
+              <NeoButton size="lg" className="text-xl px-12 py-6" onClick={() => navigate("/auth")}>
+                Start Your First Hunt <ArrowRight className="ml-2" />
+              </NeoButton>
+            </motion.div>
+          </div>
         </section>
 
         {/* Features */}
