@@ -179,7 +179,25 @@ export default function BountyPage() {
                 });
             }
 
-            // Look for resource creation that might contain market_id
+            // Look for MarketStore resource update
+            if (change.type === "write_resource" && 
+                change.data && 
+                change.data.type && 
+                change.data.type.includes("MarketStore")) {
+                
+                const marketStoreData = change.data.data;
+                if (marketStoreData && marketStoreData.markets && Array.isArray(marketStoreData.markets)) {
+                    // Get the last market in the array (most recently created)
+                    const lastMarket = marketStoreData.markets[marketStoreData.markets.length - 1];
+                    if (lastMarket && lastMarket.id !== undefined) {
+                        foundMarketId = Number(lastMarket.id);
+                        console.log("Found market ID from MarketStore:", foundMarketId);
+                        break;
+                    }
+                }
+            }
+
+            // Fallback: Look for resource creation that might contain market_id
             if (change.data && change.data.data) {
                 if (change.data.data.market_id) {
                     foundMarketId = Number(change.data.data.market_id);
