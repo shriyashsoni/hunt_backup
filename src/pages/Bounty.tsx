@@ -143,6 +143,20 @@ export default function BountyPage() {
                         break;
                     }
                 }
+                
+                // NEW: Check for MarketStore updates (where markets are stored in a vector)
+                if (change.data.type && change.data.type.includes("MarketStore")) {
+                    const data = change.data.data;
+                    if (data.markets && Array.isArray(data.markets) && data.markets.length > 0) {
+                        // The new market is likely the last one in the list
+                        const lastMarket = data.markets[data.markets.length - 1];
+                        if (lastMarket && lastMarket.id !== undefined) {
+                            foundMarketId = Number(lastMarket.id);
+                            console.log("Found Market ID in MarketStore:", foundMarketId);
+                            break;
+                        }
+                    }
+                }
             }
          }
       }
