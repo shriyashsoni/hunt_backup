@@ -43,13 +43,17 @@ export default function BountyPage() {
   const [contractExists, setContractExists] = useState<boolean | null>(null);
   const [contractCheckError, setContractCheckError] = useState<string>("");
 
-  // Auto-sync on load if missing marketId
+  // Auto-sync on load if missing marketId - more aggressive
   useEffect(() => {
     if (bounty && !bounty.marketId && bounty.creationTxnHash && !isSyncing) {
         console.log("Auto-syncing market ID...");
-        handleSyncMarket();
+        // Small delay to let transaction settle
+        const timer = setTimeout(() => {
+          handleSyncMarket();
+        }, 2000);
+        return () => clearTimeout(timer);
     }
-  }, [bounty?.creationTxnHash, bounty?.marketId]);
+  }, [bounty?._id, bounty?.marketId, bounty?.creationTxnHash]);
 
   // Check if contract exists on load
   useEffect(() => {

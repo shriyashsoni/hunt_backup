@@ -92,92 +92,24 @@ export default function CreateBounty() {
 
       const response = await signAndSubmitTransaction(transaction);
       console.log("Transaction submitted:", response.hash);
-      toast.loading("Waiting for transaction confirmation...", { duration: 5000 });
+      // IMMEDIATE SAVE: Don't wait for confirmation, save bounty right away
+      toast.success("Transaction submitted! Creating bounty...");
       
-      let committedTxn: any = null;
-      let marketId: number | undefined = undefined;
-      let txnHash = response.hash;
+      const txnHash = response.hash;
 
-      try {
-        // Custom polling logic instead of aptos.waitForTransaction
-        // This is more robust against node timeouts
-        let retries = 10;
-        while (retries > 0) {
-            try {
-                const txn = await aptos.getTransactionByHash({ transactionHash: response.hash });
-                if (txn.type !== "pending_transaction") {
-                    committedTxn = txn;
-                    break;
-                }
-            } catch (e) {
-                // Ignore 404s while pending
-            }
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s
-            retries--;
-        }
-
-        if (!committedTxn) {
-            // One last try with the SDK's waiter as a backup
-             committedTxn = await aptos.waitForTransaction({ transactionHash: response.hash });
-        }
-        
-        // @ts-ignore
-        if (!committedTxn.success) {
-          // @ts-ignore
-          throw new Error(`Transaction failed: ${committedTxn.vm_status}`);
-        }
-
-        // Attempt to extract marketId from events
-        // @ts-ignore
-        if (committedTxn.events) {
-          // @ts-ignore
-          for (const event of committedTxn.events) {
-            if ((event.type && event.type.includes("MarketCreatedEvent")) || (event.data && event.data.market_id)) {
-               if (event.data && event.data.market_id) {
-                   marketId = Number(event.data.market_id);
-                   break;
-               }
-            }
-          }
-        }
-        
-        // Fallback: Check changes if not found in events
-        if (marketId === undefined && (committedTxn as any).changes) {
-             for (const change of (committedTxn as any).changes) {
-                if (change.data && change.data.data && change.data.data.market_id) {
-                    marketId = Number(change.data.data.market_id);
-                    break;
-                }
-             }
-        }
-
-      } catch (error: any) {
-        console.error("Transaction confirmation failed:", error);
-        // ALWAYS PROCEED: If we have a hash, we assume it was submitted.
-        // We don't want to block the user if the node is flaky.
-        toast.warning("Transaction verification skipped (Node Issue). Saving bounty...", {
-             description: "Please check the explorer for confirmation."
-        });
-      }
-
-      if (marketId === undefined) {
-        console.warn("Could not find market_id in transaction events. Proceeding with hash only.");
-      } else {
-        console.log("Market Created with ID:", marketId);
-      }
-
-      // 2. Create Bounty in Convex
+      // 2. Create Bounty in Convex IMMEDIATELY with just the hash
       try {
         const bountyId = await createBounty({ 
           contentUrl,
-          marketId: marketId,
+          marketId: undefined, // Will be synced on the bounty page
           creationTxnHash: txnHash
         });
         
         toast.success("Bounty Created Successfully!", {
-          description: `Market ID: ${marketId || 'Pending Sync'} | 10 PAT reward added.`
+          description: `Transaction: ${txnHash.slice(0, 8)}... | Market ID will sync automatically.`
         });
         
+        // Navigate immediately - the bounty page will handle syncing
         navigate(`/bounty/${bountyId}`);
       } catch (convexError: any) {
         console.error("Convex creation failed:", convexError);
