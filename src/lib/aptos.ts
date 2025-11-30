@@ -9,7 +9,7 @@ const API_KEY = import.meta.env.VITE_APTOS_API_KEY;
 
 // Address from 'aptos move publish' output
 export const MODULE_ADDRESS = "0x155e43ac5e3c045997eae5fc8ccbcf9ddcc8dbd77849e4e54a40aa7d9dfd9ba9";
-export const MODULE_NAME = "DeepfakeMarket";
+export const MODULE_NAME = "market";
 
 // Force Testnet configuration
 // Only use API_KEY if it is set and looks valid (not a placeholder)

@@ -55,7 +55,7 @@ export function RewardClaim() {
       // Call the RewardDistributor smart contract
       const transaction: InputTransactionData = {
         data: {
-          function: `${MODULE_ADDRESS}::${MODULE_NAME}::claim_reward`,
+          function: `${MODULE_ADDRESS}::${MODULE_NAME}::claim_rewards`,
           typeArguments: [],
           functionArguments: [claim.marketId ? claim.marketId.toString() : "1"], // Use marketId
         },

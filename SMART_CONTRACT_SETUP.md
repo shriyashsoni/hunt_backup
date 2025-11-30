@@ -43,19 +43,7 @@ Once deployed, you need to update the frontend to point to your new contract add
     - Replace the simulated transaction logic with a call to your smart contract entry function.
     
     Example for placing a bet:
-    ```typescript
-    const transaction = {
-      data: {
-        function: `${MODULE_ADDRESS}::${MODULE_NAME}::place_bet`,
-        typeArguments: [],
-        functionArguments: [bountyId, isReal, amountInOctas],
-      }
-    };
-    ```
-
-3.  **Update `src/pages/CreateBounty.tsx`**:
-    - Call `create_market` on-chain when a bounty is created.
-
+    
 ## Contract Functions
 
 - `create_market(content_hash: String, duration: u64)`: Initializes a new prediction market.
@@ -74,3 +62,4 @@ You only need to run `aptos move publish` again if:
 **Important:** Every time you publish, you might get a new object address.
 1. Copy the new address from the terminal output.
 2. Update `src/lib/aptos.ts`:
+
